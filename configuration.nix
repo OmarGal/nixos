@@ -51,13 +51,6 @@
     NIXOS_OZONE_WL = "1";
   };
 
-  # Power management
-  services.logind.extraConfig = ''
-    HandlePowerKey=suspend
-    IdleAction=suspend
-    IdleActionSec=1m
-  '';
-
   # Unfree software
   nixpkgs.config.allowUnfree = true;
 
@@ -72,11 +65,6 @@
   security.protectKernelImage = false;
   boot.resumeDevice = "/dev/nvme0n1p4";
   boot.kernelParams = [ "resume_offset=16189440" ];
-
-  # idk
-#  systemd.services.systemd-logind.environment = {
-#   SYSTEMD_BYPASS_HIBERNATION_MEMORY_CHECK = "1";
-#  };
 
   # Swap file
   swapDevices = [{
@@ -156,6 +144,9 @@
     kitty
     firefox
   ];
+
+  # kde connect
+  programs.kdeconnect.enable = true;
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.

@@ -1,11 +1,16 @@
-{ config, pkgs, ... }:
+{ config, pkgs, stylix, ... }:
 
 {
 
   imports = [
+    #stylix.homeManagerModules.stylix
     ./sh.nix
     ./swayidle.nix
+    ./stylix.nix
   ];
+
+  # Stylix
+  #stylix.image = /home/kiwi/Downloads/wall.png;
 
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
@@ -19,7 +24,6 @@
   home.packages = with pkgs; [
     cinnamon.nemo
     rofi-wayland
-    #swayidle
     xfce.thunar
     waybar
     # # Adds the 'hello' command to your environment. It prints a friendly
