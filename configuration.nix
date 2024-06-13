@@ -2,48 +2,29 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs,  ... }:
 
 {
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
+      #./stylix.nix
     ];
 
-  # NVIDIA
-  # Enable OpenGL
-  hardware.opengl = {
-    enable = true;
-    driSupport = true;
-    driSupport32Bit = true;
-  };
-
-  # Load nvidia driver for Xorg and Wayland
-  services.xserver.videoDrivers = ["nvidia"];
-
-  hardware.nvidia = {
-
-    # Modesetting is required.
-    modesetting.enable = true;
-
-    # Nvidia power management. Experimental, and can cause sleep/suspend to fail.
-    # Also sets NVreg_PreserveVideoMemoryAllocations=1, this fixed hibernate issues.
-    powerManagement.enable = true;
-
-    # Enable the Nvidia settings menu,
-	# accessible via `nvidia-settings`.
-    nvidiaSettings = true;
-
-    # Optionally, you may need to select the appropriate driver version for your specific GPU.
-    package = config.boot.kernelPackages.nvidiaPackages.stable;
-  };
+  # AMD
+  #boot.initrd.kernelModules = [ "amdgpu" ];
+  #hardware.opengl.extraPackages = with pkgs; [
+  #  rocmPackages.clr.icd
+  #];
+  #hardware.opengl.driSupport = true; # This is already enabled by default
+  #hardware.opengl.driSupport32Bit = true; # For 32 bit applications
 
   # Hyprland
-  programs.hyprland = {
-    enable = true;
-    enableNvidiaPatches = true;
-    xwayland.enable = true;
-  };
+  #programs.hyprland = {
+  #  enable = true;
+  #  enableNvidiaPatches = true;
+  #  xwayland.enable = true;
+  #};
   environment.sessionVariables = {
     # If your cursor becomes invisible
     WLR_NO_HARDWARE_CURSORS = "1";
@@ -58,8 +39,19 @@
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   # Bootloader.
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  #boot.loader.systemd-boot.enable = true;
+  #boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader = {
+   efi = {
+    canTouchEfiVariables = true;
+    efiSysMountPoint = "/boot/efi"; # ← use the same mount point here.
+   };
+   grub = {
+     efiSupport = true;
+     #efiInstallAsRemovable = true; # in case canTouchEfiVariables doesn't work for your system
+     device = "nodev";
+   };
+  };
 
   # Resume
   security.protectKernelImage = false;
@@ -88,10 +80,17 @@
     address = "192.168.1.10";
     prefixLength = 24;
   } ];
-  #networking.useDHCP = lib.mkForce false;
+  networking.useDHCP = lib.mkForce false;
+  networking.dhcpcd.wait = "if-carrier-up";
+  systemd.network.networks.enp9s0.DHCP = "no";
   networking.interfaces.enp9s0.useDHCP = false;
   networking.defaultGateway = "192.168.1.254";
   networking.nameservers = [ "1.1.1.1" ];
+
+  # Bluetooth
+  hardware.bluetooth.enable = true; 
+  hardware.bluetooth.powerOnBoot = true;
+  services.blueman.enable = true;
 
   # Set your time zone.
   time.timeZone = "America/Mexico_City";
@@ -137,16 +136,20 @@
     ];})
   ];
 
+  #services.xserver.enable = true;
+  # SDDM
+  #services.xserver.displayManager.sddm.enable = true;
+
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     vim    
-    kitty
+    #kitty
     firefox
   ];
 
   # kde connect
-  programs.kdeconnect.enable = true;
+  #programs.kdeconnect.enable = true;
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.

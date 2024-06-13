@@ -8,7 +8,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     stylix = {
-      url = "github:danth/stylix";
+      url = "github:danth/stylix/release-23.11";
       inputs = {
 	nixpkgs.follows = "nixpkgs";
 	#home-manager.follows = "home-manager";
@@ -27,6 +27,7 @@
  	inherit system;
 	modules = [ 
 	  ./configuration.nix
+	  #stylix.nixosModules.stylix
 	];
       };
     };
@@ -35,10 +36,11 @@
 	inherit pkgs;	
 	modules = [ 
 	  ./home.nix
+	  stylix.homeManagerModules.stylix
 	];
-	extraSpecialArgs = {
-	  inherit (inputs) stylix;
-	};
+	#extraSpecialArgs = {
+	#  inherit (inputs) stylix;
+	#};
       };
     };
   };

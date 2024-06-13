@@ -2,8 +2,8 @@
 
   services.swayidle = {
     enable = true;
-    #systemdTarget = "hyprland-session.target";
-    systemdTarget = "xdg-desktop-portal-hyprland.service";
+    systemdTarget = "hyprland-session.target";
+    #systemdTarget = "xdg-desktop-portal-hyprland.service";
     events = [
     ];
 

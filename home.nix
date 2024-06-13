@@ -7,6 +7,7 @@
     ./sh.nix
     ./swayidle.nix
     ./stylix.nix
+    ./hyprland.nix
   ];
 
   # Stylix
@@ -19,12 +20,37 @@
 
   home.stateVersion = "23.11"; # Please read the comment before changing.
 
+  # Hyprland
+  wayland.windowManager.hyprland = {
+    enable = true;
+    enableNvidiaPatches = true;
+    xwayland.enable = true;
+  };
+  #environment.sessionVariables = {
+  #  # If your cursor becomes invisible
+  #  WLR_NO_HARDWARE_CURSORS = "1";
+  #  #  Hint electron apps to use wayland
+  #  NIXOS_OZONE_WL = "1";
+  #};
+
+  # idk
+  gtk.enable = true;
+  qt.enable = true;
+
+  # KDE connect
+  services.kdeconnect.enable = true;
+
   # The home.packages option allows you to install Nix packages into your
   # environment.
+  nixpkgs.config.allowUnfree = true;
   home.packages = with pkgs; [
+    google-chrome
     cinnamon.nemo
+    floorp
+    hyprpaper
+    kitty
+    pavucontrol
     rofi-wayland
-    xfce.thunar
     waybar
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
